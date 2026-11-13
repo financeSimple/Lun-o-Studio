@@ -79,15 +79,15 @@ Les concepts présentés sont fictifs. Ajoute tes informations professionnelles 
     <p id="audit-status" class="audit-status" role="status" aria-live="polite"></p>
     <div id="audit-results" class="audit-results" hidden>
       <div><h3 class="audit-small-heading">Résultats de l'analyse mobile</h3><div class="audit-scores"><div class="audit-score" id="audit-score-perf"><strong id="audit-perf">—</strong><span>Performance</span></div><div class="audit-score" id="audit-score-access"><strong id="audit-access">—</strong><span>Accessibilité</span></div><div class="audit-score" id="audit-score-seo"><strong id="audit-seo">—</strong><span>SEO</span></div><div class="audit-score" id="audit-score-best"><strong id="audit-best">—</strong><span>Bonnes pratiques</span></div></div><p class="audit-note" id="audit-details"></p></div>
-      <div><h3 class="audit-small-heading">Que veux-tu améliorer ?</h3><div class="audit-selectors"><label class="audit-choice"><input type="checkbox" class="audit-option" value="speed" checked><span><strong>⚡ Vitesse mobile</strong><small>Analyse et optimisation des ressources — à partir de 39 €</small></span></label><label class="audit-choice"><input type="checkbox" class="audit-option" value="access"><span><strong>♿ Accessibilité</strong><small>Images, liens et titres — à partir de 25 €</small></span></label><label class="audit-choice"><input type="checkbox" class="audit-option" value="seo"><span><strong>🔎 Référencement SEO</strong><small>Balises et structure du site — à partir de 29 €</small></span></label><label class="audit-choice"><input type="checkbox" class="audit-option" value="bugs"><span><strong>🛠️ Correction de bugs</strong><small>Vérification et diagnostic — à partir de 39 €</small></span></label></div></div>
-      <div class="audit-quote"><div class="audit-total"><span>Estimation indicative</span><strong id="audit-price">—</strong></div><p class="audit-price-detail" id="audit-price-detail"></p><div class="audit-buttons"><button class="btn lime" type="button" id="audit-request">Préparer ma demande →</button><button class="btn outline" type="button" id="audit-copy">Copier le bilan</button></div><p class="audit-note">Estimation pour les corrections éventuelles : cette prestation reste sur devis séparé.</p><div class="audit-pay" style="margin-top:20px;padding-top:18px;border-top:1px solid #52739b"><h3 class="audit-small-heading">Audit approfondi payant</h3><p class="audit-note">Un rapport détaillé, des étapes de correction et un ZIP d’exemples adaptés aux catégories sélectionnées (sans modification automatique du site). Le tarif est recalculé par le serveur après le test mobile.</p><p id="audit-paid-price" style="font-size:24px;font-weight:700;margin:12px 0">—</p><button class="btn lime" type="button" id="audit-pay" disabled>Payer mon audit avec PayPal</button><p class="audit-note" id="audit-payment-status" role="status" aria-live="polite">Paiement PayPal disponible après configuration du serveur.</p></div></div>
+      <div><h3 class="audit-small-heading">Que veux-tu améliorer ?</h3><div class="audit-selectors"><label class="audit-choice"><input type="checkbox" class="audit-option" value="speed" checked><span><strong>⚡ Vitesse mobile</strong><small>Images, scripts et LCP : catégorie du kit</small></span></label><label class="audit-choice"><input type="checkbox" class="audit-option" value="access"><span><strong>♿ Accessibilité</strong><small>Alternatives texte, liens et titres : catégorie du kit</small></span></label><label class="audit-choice"><input type="checkbox" class="audit-option" value="seo"><span><strong>🔎 Référencement SEO</strong><small>Balises et indexation : catégorie du kit</small></span></label><label class="audit-choice"><input type="checkbox" class="audit-option" value="bugs"><span><strong>🛠️ Correction de bugs</strong><small>Console et tests : catégorie du kit</small></span></label></div></div>
+      <div class="audit-quote"><div class="audit-total"><span>Corrections réelles, sur devis</span><strong id="audit-price">À partir de 39 €</strong></div><p class="audit-price-detail" id="audit-price-detail"></p><div class="audit-buttons"><button class="btn lime" type="button" id="audit-request">Préparer ma demande →</button><button class="btn outline" type="button" id="audit-copy">Copier le bilan</button></div><p class="audit-note">Cette offre inclut une intervention humaine sur les fichiers fournis et autorisés, après étude du besoin. Aucun paiement automatique pour les corrections réelles.</p><div class="audit-pay" style="margin-top:20px;padding-top:18px;border-top:1px solid #52739b"><h3 class="audit-small-heading">Choisis un livrable, sans surprise</h3><p class="audit-note">Analyse PageSpeed gratuite. Les offres payantes ne promettent ni correctif installé ni score 100/100. Prix fixe, vérifié côté serveur.</p><div class="field" style="margin:12px 0"><label for="audit-tier">Prestation payante</label><select id="audit-tier" style="width:100%;padding:13px;background:#101c2b;color:#f0f5ff;border:1px solid #537293;border-radius:9px"><option value="diagnostic">Diagnostic détaillé — 7 € (rapport HTML/PDF)</option><option value="kit">Kit guidé — 15 € (rapport + ZIP d'exemples par catégorie)</option></select></div><div class="field" id="audit-platform-wrap" hidden style="margin:12px 0"><label for="audit-platform">Plateforme du site (pour adapter les consignes)</label><select id="audit-platform" style="width:100%;padding:13px;background:#101c2b;color:#f0f5ff;border:1px solid #537293;border-radius:9px"><option value="shopify">Shopify</option><option value="wordpress">WordPress</option><option value="html">HTML / CSS / JavaScript</option><option value="other">Autre / inconnue</option></select><p class="audit-note">Le kit contient des consignes adaptées à la plateforme, mais pas de fichiers du site déjà corrigés.</p></div><p id="audit-paid-price" style="font-size:24px;font-weight:700;margin:12px 0">—</p><button class="btn lime" type="button" id="audit-pay" disabled>Payer la prestation choisie avec PayPal</button><p class="audit-note" id="audit-payment-status" role="status" aria-live="polite">Paiement PayPal disponible après configuration du serveur.</p></div></div>
     </div>
     <section id="luneo-report" class="luneo-report" hidden aria-labelledby="luneo-report-heading">
-      <h3 id="luneo-report-heading">Ton plan de corrections est disponible</h3>
+      <h3 id="luneo-report-heading">Ton livrable est disponible</h3>
       <p id="luneo-report-summary" class="small">Le paiement est confirmé. Ton rapport a été préparé à partir du test mobile.</p>
       <div id="luneo-report-scores" class="luneo-report-scores"></div>
       <div id="luneo-report-recommendations"></div>
-      <div class="actions"><button type="button" class="btn lime" id="luneo-kit-download">Télécharger le ZIP des recommandations et exemples</button><button type="button" class="btn outline" id="luneo-report-download">Télécharger le rapport HTML</button><button type="button" class="btn outline" id="luneo-report-print">Imprimer / enregistrer en PDF</button></div>
+      <div class="actions"><button type="button" class="btn lime" id="luneo-kit-download" hidden>Télécharger le ZIP du kit guidé</button><button type="button" class="btn outline" id="luneo-report-download">Télécharger le rapport HTML</button><button type="button" class="btn outline" id="luneo-report-print">Imprimer / enregistrer en PDF</button></div>
       <p class="small">Le ZIP contient des instructions et des extraits de code génériques à adapter à ton site. Il ne modifie pas automatiquement ton site et ne garantit pas 100/100. Conserve ta référence de paiement.</p>
     </section>
     <div class="audit-manual"><details><summary>Le test automatique ne fonctionne pas ? Saisir un score PageSpeed manuellement</summary><p>Fais un test sur <a class="audit-link" href="https://pagespeed.web.dev/" target="_blank" rel="noopener noreferrer">PageSpeed Insights</a>, puis indique le score <strong>Performance mobile</strong> affiché. Les autres scores ne seront pas inventés.</p><div class="audit-controls"><div class="field"><label for="audit-manual-score">Score mobile (0–100)</label><input id="audit-manual-score" type="number" min="0" max="100" placeholder="Ex. 73"></div><button class="btn outline" type="button" id="audit-use-manual">Utiliser ce score</button></div></details></div>
@@ -136,16 +136,21 @@ const apiReady = !LUNEO_API_URL.includes('REMPLACER-');
 let secureAuditToken = null;
 const payButton = document.getElementById('audit-pay');
 const payStatus = document.getElementById('audit-payment-status');
+const tierInput=document.getElementById('audit-tier');
+const platformInput=document.getElementById('audit-platform');
+const platformWrap=document.getElementById('audit-platform-wrap');
 function updatePaidOffer(){
- const chosen=auditChecked();const score=auditState.scores?.performance;
- const valid=apiReady&&auditState.mode==='auto'&&secureAuditToken&&Number.isInteger(score)&&chosen.length>0;
+ const isKit=tierInput.value==='kit';
+ platformWrap.hidden=!isKit;
+ const valid=apiReady&&auditState.mode==='auto'&&!!secureAuditToken&&(!isKit||auditChecked().length>0);
  payButton.disabled=!valid;
- if(!valid){document.getElementById('audit-paid-price').textContent='—';return;}
- const total=19+(score<50?20:score<80?10:0)+chosen.reduce((p,s)=>p+({speed:10,access:8,seo:8,bugs:12}[s]||0),0);
- document.getElementById('audit-paid-price').textContent=total+' € (diagnostic)';
+ document.getElementById('audit-paid-price').textContent=(isKit?'15 € (kit guidé)':'7 € (diagnostic)');
+ payStatus.textContent=valid?'Paiement PayPal sécurisé, après validation de ton analyse.':(isKit&&!auditChecked().length?'Choisis au moins une catégorie ci-dessus pour le kit.':'Lance une analyse automatique pour activer le paiement.');
 }
+tierInput.addEventListener('change',updatePaidOffer);
+platformInput.addEventListener('change',updatePaidOffer);
 
-const AUDIT_PRICES={speed:39,access:25,seo:29,bugs:39};
+const AUDIT_PRICES={speed:39,access:39,seo:39,bugs:39}; // devis manuel uniquement
 const AUDIT_LABELS={speed:'Optimisation de vitesse',access:'Accessibilité',seo:'Référencement SEO',bugs:'Diagnostic et correction de bugs'};
 const auditState={url:'',scores:null,mode:'',lcp:null};
 const auditStatus=document.getElementById('audit-status');
@@ -158,16 +163,13 @@ function auditScoreDisplay(key,id){
 }
 function auditChecked(){return [...document.querySelectorAll('.audit-option:checked')].map(x=>x.value)}
 function auditCalculate(){
-  const chosen=auditChecked();const score=auditState.scores?.performance;
-  const base=chosen.reduce((sum,id)=>sum+AUDIT_PRICES[id],0);
-  // Le supplément porte sur le diagnostic de performance, uniquement si cette prestation est choisie.
-  const supplement=chosen.includes('speed')&&Number.isFinite(score)?(score<50?30:score<80?15:0):0;
-  const total=base+supplement;
-  document.getElementById('audit-price').textContent=total+' €';
-  document.getElementById('audit-price-detail').textContent=(chosen.length?chosen.map(id=>AUDIT_LABELS[id]+' : '+AUDIT_PRICES[id]+' €').join(' · '):'Aucune prestation sélectionnée')+(supplement?' · Diagnostic de performance approfondi : '+supplement+' €':'')+'. Tarifs de départ, à confirmer selon la plateforme et les pages à traiter.';
-  document.getElementById('audit-request').disabled=!chosen.length;
-  updatePaidOffer();
-  return total;
+ const chosen=auditChecked();
+ const total=39;
+ document.getElementById('audit-price').textContent='À partir de 39 €';
+ document.getElementById('audit-price-detail').textContent='Correction réelle avec accès autorisé au code, après devis personnalisé. '+(chosen.length?'Catégories demandées : '+chosen.map(id=>AUDIT_LABELS[id]).join(', ')+'.':'Sélectionne les catégories à traiter.');
+ document.getElementById('audit-request').disabled=!chosen.length;
+ updatePaidOffer();
+ return total;
 }
 function auditRender(){
   document.getElementById('audit-results').hidden=false;
@@ -217,7 +219,7 @@ payButton.addEventListener('click',async()=>{
  if(!apiReady||!secureAuditToken||auditState.mode!=='auto')return;
  payButton.disabled=true;payStatus.textContent='Préparation du paiement sécurisé…';
  try{
-   const response=await fetch(LUNEO_API_URL+'/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:secureAuditToken,services:auditChecked()})});
+   const response=await fetch(LUNEO_API_URL+'/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:secureAuditToken,tier:tierInput.value,platform:platformInput.value,services:auditChecked()})});
    const data=await response.json();if(!response.ok||!data.checkoutUrl)throw Error(data.error||'Paiement indisponible');
    const checkout=new URL(data.checkoutUrl);if(checkout.protocol!=='https:'||!(checkout.hostname==='paypal.com'||checkout.hostname.endsWith('.paypal.com'))||checkout.username||checkout.password)throw Error('URL de paiement invalide');
    window.location.assign(checkout.href);
@@ -243,7 +245,8 @@ async function luneoGetReport(orderId){
  luneoReportData=data;luneoReportHtml=luneoMakeReportHtml(data);
  const container=document.getElementById('luneo-report');container.hidden=false;
  const summary=document.getElementById('luneo-report-summary');
- summary.textContent='Site : '+data.website+' · Référence : '+data.reference+' · Test mobile, diagnostic sans modification du site.';
+ summary.textContent='Site : '+data.website+' · Référence : '+data.reference+' · Offre : '+(data.tier==='kit'?'kit guidé':'diagnostic')+' · Aucun fichier de ton site modifié.';
+ document.getElementById('luneo-kit-download').hidden=data.tier!=='kit';
  const scores=document.getElementById('luneo-report-scores');scores.replaceChildren();
  for(const key of ['performance','accessibility','seo','best-practices']){
   const cell=document.createElement('div'),number=document.createElement('strong'),title=document.createElement('span');
@@ -304,9 +307,16 @@ function luneoPlanText(d){
  return lines.join('\n');
 }
 function luneoDownloadZip(){
- const d=luneoReportData;if(!d||d.paid!==true)return;
+ const d=luneoReportData;if(!d||d.paid!==true||d.tier!=='kit')return;
  try{
   const files=[['LISEZ-MOI.txt',`LUNÉO STUDIO — KIT D'AIDE À LA CORRECTION\n\nLe paiement a débloqué un plan de corrections selon les catégories achetées.\nLes extraits de code sont des EXEMPLES GÉNÉRIQUES, jamais des corrections propres au code de votre site.\nPour fournir des patchs prêts à installer, Lunéo doit obtenir les fichiers du site et l'autorisation du propriétaire.\nUn score 100/100 n'est pas garanti. Testez toujours dans une copie et sauvegardez avant toute modification.\n\nVoir PLAN-DE-CORRECTIONS.md et rapport.html.`],['PLAN-DE-CORRECTIONS.md',luneoPlanText(d)],['rapport.html',luneoReportHtml],['donnees/mesures.json',JSON.stringify({website:d.website,reference:d.reference,scores:d.scores,metrics:d.metrics,services:d.services,actionPlan:d.actionPlan,observations:d.observations,measuredAt:d.measuredAt},null,2)]];
+  const guides={
+   shopify:'SHOPIFY — Dans Boutique en ligne > Thèmes, dupliquer le thème avant modification. Examiner les sections Liquid et réglages des images. Ne pas toucher au panier, au checkout ni aux applications sans validation. Les exemples HTML ne sont pas des extraits Liquid prêts à coller.',
+   wordpress:'WORDPRESS — Faire une sauvegarde complète et utiliser un environnement de préproduction. Identifier le thème, les extensions et le constructeur de pages. Préférer un thème enfant pour les modifications de code. Les extraits HTML sont illustratifs.',
+   html:'HTML/CSS/JS — Dupliquer le dépôt, relever les fichiers réellement concernés dans Lighthouse, adapter les extraits à la structure existante puis faire un déploiement de test.',
+   other:'PLATEFORME NON IDENTIFIÉE — Identifier le CMS, sauvegarder le site et demander au développeur l’emplacement des images, scripts et balises. Ne jamais coller les extraits aveuglément.'
+  };
+  files.push(['GUIDE-PLATEFORME.txt',guides[d.platform]||guides.other]);
   for(const id of d.selectedCategories||[]){const examples=LUNEO_EXAMPLES[id];if(examples)for(const [path,content]of Object.entries(examples))files.push([path,content]);}
   const blob=luneoZip(files),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Luneo-kit-'+d.reference+'.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),15000);
  }catch(e){alert('Téléchargement ZIP impossible : '+(e.message||'erreur'));}
