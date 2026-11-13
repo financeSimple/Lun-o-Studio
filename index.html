@@ -230,6 +230,43 @@ let luneoReportData = null;
 let luneoReportHtml = '';
 function luneoEscapeHtml(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function luneoScoreLabel(key){return ({performance:'Performance',accessibility:'Accessibilité',seo:'SEO','best-practices':'Bonnes pratiques'})[key]||key;}
+// Luneo V3.2 : fusionner les constats redondants du Worker avant affichage et export.
+// Préférer une fiche ciblée (URL/sélecteur) à une recommandation générique.
+function luneoPlanGroup(step){
+ const t=((step.title||'')+' '+(step.action||'').slice(0,70)).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+ if(/lcp|largest contentful|plus grand element visible|contenu principal/.test(t))return 'lcp';
+ if(/ressources? (qui retardent|bloquant)|premier affichage|render.blocking/.test(t))return 'render-blocking';
+ if(/javascript (non utilise|inutilise)|scripts? (non utilise|inutilise)/.test(t))return 'unused-js';
+ if(/css (non utilise|inutilise)|css inutilis|regles css inutilis/.test(t))return 'unused-css';
+ if(/images? hors ecran|format et le dimensionnement des images|optimiser les images|image delivery/.test(t))return 'images';
+ if(/images? sans attribut alt|decrire les images utiles|alternatives? textuelles?/.test(t))return 'image-alt';
+ if(/nommer les liens|nom accessible a chaque lien|nommer les boutons|nom accessible a chaque bouton/.test(t))return /bouton/.test(t)?'button-name':'link-name';
+ if(/structure logique des titres|titres dans un ordre logique|ordre logique des titres/.test(t))return 'heading-order';
+ if(/erreurs? javascript|erreurs? en console/.test(t))return 'console-errors';
+ return 'other:'+String(step.title||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+}
+function luneoHasTarget(step){return /(?:https?:\/\/|selecteur\s*:|ressource ou selecteur\s*:)/i.test((step.action||'').normalize('NFD').replace(/[\u0300-\u036f]/g,''))||/^element identifie/i.test((step.title||'').normalize('NFD').replace(/[\u0300-\u036f]/g,''));}
+function luneoCleanPlan(plan){
+ return (Array.isArray(plan)?plan:[]).map(cat=>{
+  const groups=new Map();
+  for(const step of (Array.isArray(cat.steps)?cat.steps:[])){
+   const key=luneoPlanGroup(step),old=groups.get(key);
+   if(!old || (luneoHasTarget(step)&&!luneoHasTarget(old)))groups.set(key,{...step});
+  }
+  const order=['lcp','render-blocking','images','unused-js','unused-css','image-alt','link-name','button-name','heading-order','console-errors'];
+  const steps=[...groups.entries()].sort(([a],[b])=>{
+   const ia=order.indexOf(a),ib=order.indexOf(b);
+   return (ia<0?100:ia)-(ib<0?100:ib);
+  }).map(([key,step])=>{
+   // Ne pas présenter toute ressource repérée comme une priorité haute.
+   if(['images','unused-js','unused-css'].includes(key)&&step.priority==='Haute')step.priority='Moyenne';
+   if(luneoHasTarget(step)&&/^element identifie\s*:/i.test((step.title||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'')))step.title=step.title.replace(/^Élément identifié\s*:\s*/i,'');
+   return step;
+  });
+  return {...cat,steps};
+ }).filter(cat=>cat.steps.length);
+}
+
 function luneoMakeReportHtml(d){
   const scores=['performance','accessibility','seo','best-practices'].map(k=>'<tr><td>'+luneoEscapeHtml(luneoScoreLabel(k))+'</td><td>'+luneoEscapeHtml(Number.isFinite(d.scores?.[k])?d.scores[k]+'/100':'Non mesuré')+'</td></tr>').join('');
   const rows=(d.recommendations||[]).map((r,i)=>'<section><h3>'+(i+1)+'. '+luneoEscapeHtml(r.title)+' — '+luneoEscapeHtml(r.priority)+'</h3><p>'+luneoEscapeHtml(r.action)+'</p></section>').join('');
@@ -238,11 +275,12 @@ function luneoMakeReportHtml(d){
   const measured=d.measuredAt?new Date(d.measuredAt).toLocaleString('fr-FR'):'Date inconnue';
   const services=(d.services||[]).map(luneoEscapeHtml).join(', ')||'Diagnostic général';
   const lcp=Number.isFinite(d.metrics?.lcp)?(d.metrics.lcp/1000).toFixed(2)+' s':'Non mesuré';
-  return '<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Rapport Lunéo — '+luneoEscapeHtml(d.reference)+'</title><style>body{font:16px/1.55 Arial,sans-serif;color:#152235;max-width:820px;margin:35px auto;padding:0 26px}h1{font-size:34px}h2{margin-top:32px;color:#173e70}h3{font-size:17px;margin-bottom:6px}section{border-bottom:1px solid #ddd;padding:8px 0}table{border-collapse:collapse;width:100%}td{padding:11px;border-bottom:1px solid #ddd}.muted{color:#60718a}.pill{background:#e8f1fc;padding:8px 12px;border-radius:8px;display:inline-block}.print{margin:15px 0;padding:10px 15px;border:0;border-radius:8px;background:#173e70;color:white;cursor:pointer}@media print{.print{display:none}body{margin:0}}</style></head><body><button class="print" onclick="window.print()">Imprimer / enregistrer en PDF</button><p class="muted">LUNÉO STUDIO • AUDIT AUTOMATIQUE</p><h1>Rapport de diagnostic web</h1><p><b>Site :</b> '+luneoEscapeHtml(d.website)+'</p><p><b>Référence :</b> '+luneoEscapeHtml(d.reference)+'</p><p><b>Date du test :</b> '+luneoEscapeHtml(measured)+'</p><p><b>Prestations choisies :</b> '+services+'</p><h2>Résultats mobile</h2><table>'+scores+'</table><p><b>Largest Contentful Paint (LCP) :</b> '+luneoEscapeHtml(lcp)+'</p><h2>Recommandations</h2>'+rows+'<h2>Périmètre et limites</h2><p>'+luneoEscapeHtml(d.methodology)+'</p><p class="pill">'+luneoEscapeHtml(d.scope)+'</p><p class="muted">Rapport généré automatiquement après confirmation du paiement PayPal Sandbox ou Live selon la configuration du marchand.</p></body></html>';
+  return '<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Rapport Lunéo — '+luneoEscapeHtml(d.reference)+'</title><style>body{font:16px/1.55 Arial,sans-serif;color:#152235;max-width:820px;margin:35px auto;padding:0 26px}h1{font-size:34px}h2{margin-top:32px;color:#173e70}h3{font-size:17px;margin-bottom:6px}section{border-bottom:1px solid #ddd;padding:8px 0}table{border-collapse:collapse;width:100%}td{padding:11px;border-bottom:1px solid #ddd}.muted{color:#60718a}.pill{background:#e8f1fc;padding:8px 12px;border-radius:8px;display:inline-block}.print{margin:15px 0;padding:10px 15px;border:0;border-radius:8px;background:#173e70;color:white;cursor:pointer}@media print{.print{display:none}body{margin:0}}</style></head><body><button class="print" onclick="window.print()">Imprimer / enregistrer en PDF</button><p class="muted">LUNÉO STUDIO • AUDIT AUTOMATIQUE</p><h1>Rapport de diagnostic web</h1><p><b>Site :</b> '+luneoEscapeHtml(d.website)+'</p><p><b>Référence :</b> '+luneoEscapeHtml(d.reference)+'</p><p><b>Date du test :</b> '+luneoEscapeHtml(measured)+'</p><p><b>Prestations choisies :</b> '+services+'</p><h2>Résultats mobile</h2><table>'+scores+'</table><p><b>Largest Contentful Paint (LCP) :</b> '+luneoEscapeHtml(lcp)+'</p><h2>'+(d.tier==='kit'?'Plan de corrections guidées':'Recommandations')+'</h2>'+(d.tier==='kit'?plan:rows)+'<h2>Périmètre et limites</h2><p>'+luneoEscapeHtml(d.methodology)+'</p><p class="pill">'+luneoEscapeHtml(d.scope)+'</p><p class="muted">Rapport généré automatiquement après confirmation du paiement PayPal Sandbox ou Live selon la configuration du marchand.</p></body></html>';
 }
 async function luneoGetReport(orderId){
  const response=await fetch(LUNEO_API_URL+'/api/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({orderId})});
  const data=await response.json();if(!response.ok||data.paid!==true)throw Error(data.error||'Rapport indisponible');
+ data.actionPlan=luneoCleanPlan(data.actionPlan);
  luneoReportData=data;luneoReportHtml=luneoMakeReportHtml(data);
  const container=document.getElementById('luneo-report');container.hidden=false;
  const summary=document.getElementById('luneo-report-summary');
@@ -254,13 +292,13 @@ async function luneoGetReport(orderId){
   number.textContent=Number.isFinite(data.scores?.[key])?data.scores[key]+'/100':'—';title.textContent=luneoScoreLabel(key);cell.append(number,title);scores.append(cell);
  }
  const recommendations=document.getElementById('luneo-report-recommendations');recommendations.replaceChildren();
- const heading=document.createElement('h4');heading.textContent='Étapes selon les catégories choisies';const list=document.createElement('ol');
+ const heading=document.createElement('h4');heading.textContent='Recommandations du diagnostic';const list=document.createElement('ol');
  for(const category of (data.actionPlan||[])){const h=document.createElement('h4');h.textContent=category.name;recommendations.append(h);for(const step of category.steps||[]){const li=document.createElement('li'),name=document.createElement('strong'),p=document.createElement('p'),check=document.createElement('p');name.textContent=step.title+' — '+step.priority+' ('+step.evidence+')';p.textContent='À faire : '+step.action;check.textContent='Vérifier : '+step.verify;li.append(name,p,check);recommendations.append(li);}}
  if(data.tier==='kit'){const eh=document.createElement('h4');eh.textContent='Éléments réellement repérés par Lighthouse';recommendations.append(eh);const es=document.createElement('p');es.textContent=(data.concreteEvidence||[]).length+' contrôles détaillés disponibles ; le ZIP contient leurs URL, sélecteurs et un guide ciblé.';recommendations.append(es);}
- for(const item of (data.recommendations||[])){
+ for(const item of (data.tier==='kit'?[]:(data.recommendations||[]))){
   const li=document.createElement('li'),name=document.createElement('strong'),p=document.createElement('p');
   name.textContent=item.title+' ('+item.priority+')';p.textContent=item.action;li.append(name,p);list.append(li);
- }recommendations.append(heading,list);
+ }if(data.tier!=='kit')recommendations.append(heading,list);
  container.scrollIntoView({block:'nearest',behavior:'smooth'});
  return data;
 }
