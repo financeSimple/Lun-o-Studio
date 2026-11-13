@@ -80,15 +80,15 @@ Les concepts présentés sont fictifs. Ajoute tes informations professionnelles 
     <div id="audit-results" class="audit-results" hidden>
       <div><h3 class="audit-small-heading">Résultats de l'analyse mobile</h3><div class="audit-scores"><div class="audit-score" id="audit-score-perf"><strong id="audit-perf">—</strong><span>Performance</span></div><div class="audit-score" id="audit-score-access"><strong id="audit-access">—</strong><span>Accessibilité</span></div><div class="audit-score" id="audit-score-seo"><strong id="audit-seo">—</strong><span>SEO</span></div><div class="audit-score" id="audit-score-best"><strong id="audit-best">—</strong><span>Bonnes pratiques</span></div></div><p class="audit-note" id="audit-details"></p></div>
       <div><h3 class="audit-small-heading">Que veux-tu améliorer ?</h3><div class="audit-selectors"><label class="audit-choice"><input type="checkbox" class="audit-option" value="speed" checked><span><strong>⚡ Vitesse mobile</strong><small>Analyse et optimisation des ressources — à partir de 39 €</small></span></label><label class="audit-choice"><input type="checkbox" class="audit-option" value="access"><span><strong>♿ Accessibilité</strong><small>Images, liens et titres — à partir de 25 €</small></span></label><label class="audit-choice"><input type="checkbox" class="audit-option" value="seo"><span><strong>🔎 Référencement SEO</strong><small>Balises et structure du site — à partir de 29 €</small></span></label><label class="audit-choice"><input type="checkbox" class="audit-option" value="bugs"><span><strong>🛠️ Correction de bugs</strong><small>Vérification et diagnostic — à partir de 39 €</small></span></label></div></div>
-      <div class="audit-quote"><div class="audit-total"><span>Estimation indicative</span><strong id="audit-price">—</strong></div><p class="audit-price-detail" id="audit-price-detail"></p><div class="audit-buttons"><button class="btn lime" type="button" id="audit-request">Préparer ma demande →</button><button class="btn outline" type="button" id="audit-copy">Copier le bilan</button></div><p class="audit-note">Estimation pour les corrections éventuelles : cette prestation reste sur devis séparé.</p><div class="audit-pay" style="margin-top:20px;padding-top:18px;border-top:1px solid #52739b"><h3 class="audit-small-heading">Audit approfondi payant</h3><p class="audit-note">Un diagnostic avec recommandations, sans correction automatique. Le tarif est recalculé par le serveur après le test mobile.</p><p id="audit-paid-price" style="font-size:24px;font-weight:700;margin:12px 0">—</p><button class="btn lime" type="button" id="audit-pay" disabled>Payer mon audit avec PayPal</button><p class="audit-note" id="audit-payment-status" role="status" aria-live="polite">Paiement PayPal disponible après configuration du serveur.</p></div></div>
+      <div class="audit-quote"><div class="audit-total"><span>Estimation indicative</span><strong id="audit-price">—</strong></div><p class="audit-price-detail" id="audit-price-detail"></p><div class="audit-buttons"><button class="btn lime" type="button" id="audit-request">Préparer ma demande →</button><button class="btn outline" type="button" id="audit-copy">Copier le bilan</button></div><p class="audit-note">Estimation pour les corrections éventuelles : cette prestation reste sur devis séparé.</p><div class="audit-pay" style="margin-top:20px;padding-top:18px;border-top:1px solid #52739b"><h3 class="audit-small-heading">Audit approfondi payant</h3><p class="audit-note">Un rapport détaillé, des étapes de correction et un ZIP d’exemples adaptés aux catégories sélectionnées (sans modification automatique du site). Le tarif est recalculé par le serveur après le test mobile.</p><p id="audit-paid-price" style="font-size:24px;font-weight:700;margin:12px 0">—</p><button class="btn lime" type="button" id="audit-pay" disabled>Payer mon audit avec PayPal</button><p class="audit-note" id="audit-payment-status" role="status" aria-live="polite">Paiement PayPal disponible après configuration du serveur.</p></div></div>
     </div>
     <section id="luneo-report" class="luneo-report" hidden aria-labelledby="luneo-report-heading">
-      <h3 id="luneo-report-heading">Ton diagnostic est disponible</h3>
+      <h3 id="luneo-report-heading">Ton plan de corrections est disponible</h3>
       <p id="luneo-report-summary" class="small">Le paiement est confirmé. Ton rapport a été préparé à partir du test mobile.</p>
       <div id="luneo-report-scores" class="luneo-report-scores"></div>
       <div id="luneo-report-recommendations"></div>
-      <div class="actions"><button type="button" class="btn lime" id="luneo-report-download">Télécharger le rapport HTML</button><button type="button" class="btn outline" id="luneo-report-print">Imprimer / enregistrer en PDF</button></div>
-      <p class="small">Le rapport décrit uniquement la page testée, sans correction automatique. Conserve ton fichier et ta référence de paiement.</p>
+      <div class="actions"><button type="button" class="btn lime" id="luneo-kit-download">Télécharger le ZIP des recommandations et exemples</button><button type="button" class="btn outline" id="luneo-report-download">Télécharger le rapport HTML</button><button type="button" class="btn outline" id="luneo-report-print">Imprimer / enregistrer en PDF</button></div>
+      <p class="small">Le ZIP contient des instructions et des extraits de code génériques à adapter à ton site. Il ne modifie pas automatiquement ton site et ne garantit pas 100/100. Conserve ta référence de paiement.</p>
     </section>
     <div class="audit-manual"><details><summary>Le test automatique ne fonctionne pas ? Saisir un score PageSpeed manuellement</summary><p>Fais un test sur <a class="audit-link" href="https://pagespeed.web.dev/" target="_blank" rel="noopener noreferrer">PageSpeed Insights</a>, puis indique le score <strong>Performance mobile</strong> affiché. Les autres scores ne seront pas inventés.</p><div class="audit-controls"><div class="field"><label for="audit-manual-score">Score mobile (0–100)</label><input id="audit-manual-score" type="number" min="0" max="100" placeholder="Ex. 73"></div><button class="btn outline" type="button" id="audit-use-manual">Utiliser ce score</button></div></details></div>
   </div>
@@ -231,6 +231,7 @@ function luneoScoreLabel(key){return ({performance:'Performance',accessibility:'
 function luneoMakeReportHtml(d){
   const scores=['performance','accessibility','seo','best-practices'].map(k=>'<tr><td>'+luneoEscapeHtml(luneoScoreLabel(k))+'</td><td>'+luneoEscapeHtml(Number.isFinite(d.scores?.[k])?d.scores[k]+'/100':'Non mesuré')+'</td></tr>').join('');
   const rows=(d.recommendations||[]).map((r,i)=>'<section><h3>'+(i+1)+'. '+luneoEscapeHtml(r.title)+' — '+luneoEscapeHtml(r.priority)+'</h3><p>'+luneoEscapeHtml(r.action)+'</p></section>').join('');
+  const plan=(d.actionPlan||[]).map(cat=>'<section><h3>'+luneoEscapeHtml(cat.name)+'</h3>'+(cat.steps||[]).map((s,i)=>'<p><b>'+(i+1)+'. '+luneoEscapeHtml(s.title)+'</b> ('+luneoEscapeHtml(s.priority)+')<br>'+luneoEscapeHtml(s.evidence)+'<br><b>À faire :</b> '+luneoEscapeHtml(s.action)+'<br><b>Contrôle :</b> '+luneoEscapeHtml(s.verify)+'</p>').join('')+'</section>').join('');
   const measured=d.measuredAt?new Date(d.measuredAt).toLocaleString('fr-FR'):'Date inconnue';
   const services=(d.services||[]).map(luneoEscapeHtml).join(', ')||'Diagnostic général';
   const lcp=Number.isFinite(d.metrics?.lcp)?(d.metrics.lcp/1000).toFixed(2)+' s':'Non mesuré';
@@ -249,7 +250,8 @@ async function luneoGetReport(orderId){
   number.textContent=Number.isFinite(data.scores?.[key])?data.scores[key]+'/100':'—';title.textContent=luneoScoreLabel(key);cell.append(number,title);scores.append(cell);
  }
  const recommendations=document.getElementById('luneo-report-recommendations');recommendations.replaceChildren();
- const heading=document.createElement('h4');heading.textContent='Priorités recommandées';const list=document.createElement('ol');
+ const heading=document.createElement('h4');heading.textContent='Étapes selon les catégories choisies';const list=document.createElement('ol');
+ for(const category of (data.actionPlan||[])){const h=document.createElement('h4');h.textContent=category.name;recommendations.append(h);for(const step of category.steps||[]){const li=document.createElement('li'),name=document.createElement('strong'),p=document.createElement('p'),check=document.createElement('p');name.textContent=step.title+' — '+step.priority+' ('+step.evidence+')';p.textContent='À faire : '+step.action;check.textContent='Vérifier : '+step.verify;li.append(name,p,check);recommendations.append(li);}}
  for(const item of (data.recommendations||[])){
   const li=document.createElement('li'),name=document.createElement('strong'),p=document.createElement('p');
   name.textContent=item.title+' ('+item.priority+')';p.textContent=item.action;li.append(name,p);list.append(li);
@@ -262,6 +264,55 @@ function luneoOpenReport(){
  const blob=new Blob([luneoReportHtml],{type:'text/html;charset=utf-8'}),url=URL.createObjectURL(blob);
  const a=document.createElement('a');a.href=url;a.download='Luneo-rapport-'+(luneoReportData?.reference||'audit')+'.html';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),15000);
 }
+
+// ZIP standard, sans dépendance externe ; contenu = rapport + recommandations + exemples NON appliqués.
+const LUNEO_EXAMPLES={
+ speed:{
+  'exemples/performance/image-principale.html':`<!-- EXEMPLE À ADAPTER, NE PAS COLLER TEL QUEL DANS SHOPIFY -->\n<!-- Image prioritaire uniquement si c'est l'élément LCP au-dessus de la ligne de flottaison -->\n<img src="banniere-800.webp" srcset="banniere-400.webp 400w, banniere-800.webp 800w, banniere-1200.webp 1200w" sizes="100vw" width="1200" height="700" loading="eager" fetchpriority="high" alt="Description pertinente de la collection">\n`,
+  'exemples/performance/images-secondaires.html':`<!-- Exemple pour une image située SOUS la ligne de flottaison, pas pour l'image LCP -->\n<img src="produit.webp" width="600" height="800" loading="lazy" decoding="async" alt="Description du produit">\n`,
+  'exemples/performance/verification.md':`# Vérifier l'optimisation mobile\n1. Identifier l'élément LCP dans PageSpeed.\n2. Optimiser sa ressource et sa priorité, sans lui appliquer lazy loading.\n3. Différer les scripts uniquement après avoir vérifié leur rôle.\n4. Tester menu, formulaires, panier et paiement.\n5. Relancer PageSpeed plusieurs fois et comparer les mêmes conditions.\n`},
+ access:{
+  'exemples/accessibilite/images-et-liens.html':`<!-- Images utiles : texte alternatif descriptif ; images décoratives : alt vide -->\n<img src="produit.webp" alt="Robe noire à manches longues">\n<img src="ornement.svg" alt="">\n<a href="/cart" aria-label="Voir mon panier"><!-- icône --></a>\n<button type="button" aria-label="Ouvrir le menu"><!-- icône --></button>\n`,
+  'exemples/accessibilite/titres.html':`<!-- Exemple de hiérarchie ; adapter selon le contenu réel -->\n<h1>Collection automne</h1>\n<section><h2>Nouveautés</h2><h3>Robes</h3></section>\n`,
+  'exemples/accessibilite/tests.md':`# Tests indispensables\n- Navigation complète au clavier (Tab, Entrée, Échap).\n- Noms des liens et boutons annoncés au lecteur d'écran.\n- Contraste suffisant et focus visible.\n- Refaire Lighthouse et effectuer une revue manuelle.\n`},
+ seo:{
+  'exemples/seo/balises.html':`<!-- EXEMPLE à adapter page par page ; conserver un seul title -->\n<title>Collection femme — Exemple de boutique</title>\n<meta name="description" content="Découvrez une sélection de vêtements pour femme, les tailles et les matières disponibles.">\n<link rel="canonical" href="https://www.exemple.fr/collection/">\n`,
+  'exemples/seo/controle.md':`# Checklist SEO\n- Un title et une meta description pertinents par page importante.\n- Canonical cohérent, indexation souhaitée, robots.txt et sitemap.\n- Titres H1/H2 correspondant au contenu réel.\n- Vérifier Search Console uniquement avec l'autorisation du propriétaire.\n- Un score Lighthouse 100/100 ne garantit pas de position dans Google.\n`},
+ bugs:{
+  'exemples/bonnes-pratiques/diagnostic.md':`# Diagnostic des bugs\n1. Ouvrir F12 > Console et Network et reproduire le problème.\n2. Relever erreur, URL du fichier et parcours utilisateur.\n3. Corriger dans une copie / préproduction.\n4. Tester menu, recherche, formulaires, panier et paiement.\n5. Ne jamais supprimer un script ou modifier une politique CSP au hasard.\n6. Un test Lighthouse ne remplace pas un audit de sécurité.\n`}
+};
+function luneoUtf8(s){return new TextEncoder().encode(s);}
+function luneoCrc32(data){let crc=0xffffffff;for(const byte of data){crc^=byte;for(let j=0;j<8;j++)crc=(crc>>>1)^((crc&1)?0xedb88320:0);}return (crc^0xffffffff)>>>0;}
+function luneoZip(files){
+ const chunks=[],central=[];let offset=0;const enc=luneoUtf8;
+ function header(size){return new DataView(new ArrayBuffer(size));}
+ for(const [name,content] of files){
+  const fn=enc(name),bytes=enc(content),crc=luneoCrc32(bytes);if(fn.length>65535||bytes.length>0xffffffff)throw Error('Fichier trop volumineux');
+  const h=header(30);h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(8,0,true);h.setUint32(14,crc,true);h.setUint32(18,bytes.length,true);h.setUint32(22,bytes.length,true);h.setUint16(26,fn.length,true);
+  chunks.push(h.buffer,fn,bytes);
+  const c=header(46);c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint32(16,crc,true);c.setUint32(20,bytes.length,true);c.setUint32(24,bytes.length,true);c.setUint16(28,fn.length,true);c.setUint32(42,offset,true);central.push(c.buffer,fn);
+  offset+=30+fn.length+bytes.length;
+ }
+ const centralLen=central.reduce((n,c)=>n+c.byteLength,0),end=header(22);
+ end.setUint32(0,0x06054b50,true);end.setUint16(8,files.length,true);end.setUint16(10,files.length,true);end.setUint32(12,centralLen,true);end.setUint32(16,offset,true);
+ return new Blob([...chunks,...central,end.buffer],{type:'application/zip'});
+}
+function luneoPlanText(d){
+ const lines=['LUNÉO STUDIO — PLAN DE CORRECTIONS','Site : '+d.website,'Référence : '+d.reference,'Mesures : Google PageSpeed mobile, '+new Date(d.measuredAt||Date.now()).toLocaleString('fr-FR'),'','Scores : '+Object.entries(d.scores||{}).map(([k,v])=>k+' '+v+'/100').join(' | '),''];
+ for(const c of d.actionPlan||[]){lines.push('## '+c.name);for(const [i,s] of (c.steps||[]).entries()){lines.push((i+1)+'. '+s.title+' — '+s.priority,'Constat : '+s.evidence,'À faire : '+s.action,'Vérifier : '+s.verify,'');}}
+ lines.push('IMPORTANT : les exemples du ZIP sont génériques et ne sont pas des patchs prêts à déployer sur votre site. Aucune garantie de 100/100. Tester sur une copie et sauvegarder avant toute modification.');
+ return lines.join('\n');
+}
+function luneoDownloadZip(){
+ const d=luneoReportData;if(!d||d.paid!==true)return;
+ try{
+  const files=[['LISEZ-MOI.txt',`LUNÉO STUDIO — KIT D'AIDE À LA CORRECTION\n\nLe paiement a débloqué un plan de corrections selon les catégories achetées.\nLes extraits de code sont des EXEMPLES GÉNÉRIQUES, jamais des corrections propres au code de votre site.\nPour fournir des patchs prêts à installer, Lunéo doit obtenir les fichiers du site et l'autorisation du propriétaire.\nUn score 100/100 n'est pas garanti. Testez toujours dans une copie et sauvegardez avant toute modification.\n\nVoir PLAN-DE-CORRECTIONS.md et rapport.html.`],['PLAN-DE-CORRECTIONS.md',luneoPlanText(d)],['rapport.html',luneoReportHtml],['donnees/mesures.json',JSON.stringify({website:d.website,reference:d.reference,scores:d.scores,metrics:d.metrics,services:d.services,actionPlan:d.actionPlan,observations:d.observations,measuredAt:d.measuredAt},null,2)]];
+  for(const id of d.selectedCategories||[]){const examples=LUNEO_EXAMPLES[id];if(examples)for(const [path,content]of Object.entries(examples))files.push([path,content]);}
+  const blob=luneoZip(files),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Luneo-kit-'+d.reference+'.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),15000);
+ }catch(e){alert('Téléchargement ZIP impossible : '+(e.message||'erreur'));}
+}
+document.getElementById('luneo-kit-download').addEventListener('click',luneoDownloadZip);
+
 document.getElementById('luneo-report-download').addEventListener('click',luneoOpenReport);
 document.getElementById('luneo-report-print').addEventListener('click',()=>{
  if(!luneoReportHtml)return;
