@@ -72,7 +72,7 @@ Les concepts présentés sont fictifs. Ajoute tes informations professionnelles 
     <div id="audit-results" class="audit-results" hidden>
       <div><h3 class="audit-small-heading">Résultats de l'analyse mobile</h3><div class="audit-scores"><div class="audit-score" id="audit-score-perf"><strong id="audit-perf">—</strong><span>Performance</span></div><div class="audit-score" id="audit-score-access"><strong id="audit-access">—</strong><span>Accessibilité</span></div><div class="audit-score" id="audit-score-seo"><strong id="audit-seo">—</strong><span>SEO</span></div><div class="audit-score" id="audit-score-best"><strong id="audit-best">—</strong><span>Bonnes pratiques</span></div></div><p class="audit-note" id="audit-details"></p></div>
       <div><h3 class="audit-small-heading">Que veux-tu améliorer ?</h3><div class="audit-selectors"><label class="audit-choice"><input type="checkbox" class="audit-option" value="speed" checked><span><strong>⚡ Vitesse mobile</strong><small>Analyse et optimisation des ressources — à partir de 39 €</small></span></label><label class="audit-choice"><input type="checkbox" class="audit-option" value="access"><span><strong>♿ Accessibilité</strong><small>Images, liens et titres — à partir de 25 €</small></span></label><label class="audit-choice"><input type="checkbox" class="audit-option" value="seo"><span><strong>🔎 Référencement SEO</strong><small>Balises et structure du site — à partir de 29 €</small></span></label><label class="audit-choice"><input type="checkbox" class="audit-option" value="bugs"><span><strong>🛠️ Correction de bugs</strong><small>Vérification et diagnostic — à partir de 39 €</small></span></label></div></div>
-      <div class="audit-quote"><div class="audit-total"><span>Estimation indicative</span><strong id="audit-price">—</strong></div><p class="audit-price-detail" id="audit-price-detail"></p><div class="audit-buttons"><button class="btn lime" type="button" id="audit-request">Préparer ma demande →</button><button class="btn outline" type="button" id="audit-copy">Copier le bilan</button></div><p class="audit-note">Estimation pour les corrections éventuelles : cette prestation reste sur devis séparé.</p><div class="audit-pay" style="margin-top:20px;padding-top:18px;border-top:1px solid #52739b"><h3 class="audit-small-heading">Audit approfondi payant</h3><p class="audit-note">Un diagnostic avec recommandations, sans correction automatique. Le tarif est recalculé par le serveur après le test mobile.</p><p id="audit-paid-price" style="font-size:24px;font-weight:700;margin:12px 0">—</p><button class="btn lime" type="button" id="audit-pay" disabled>Passer au paiement sécurisé</button><p class="audit-note" id="audit-payment-status" role="status" aria-live="polite">Paiement disponible après la configuration du serveur.</p></div></div>
+      <div class="audit-quote"><div class="audit-total"><span>Estimation indicative</span><strong id="audit-price">—</strong></div><p class="audit-price-detail" id="audit-price-detail"></p><div class="audit-buttons"><button class="btn lime" type="button" id="audit-request">Préparer ma demande →</button><button class="btn outline" type="button" id="audit-copy">Copier le bilan</button></div><p class="audit-note">Estimation pour les corrections éventuelles : cette prestation reste sur devis séparé.</p><div class="audit-pay" style="margin-top:20px;padding-top:18px;border-top:1px solid #52739b"><h3 class="audit-small-heading">Audit approfondi payant</h3><p class="audit-note">Un diagnostic avec recommandations, sans correction automatique. Le tarif est recalculé par le serveur après le test mobile.</p><p id="audit-paid-price" style="font-size:24px;font-weight:700;margin:12px 0">—</p><button class="btn lime" type="button" id="audit-pay" disabled>Payer mon audit avec PayPal</button><p class="audit-note" id="audit-payment-status" role="status" aria-live="polite">Paiement PayPal disponible après configuration du serveur.</p></div></div>
     </div>
     <div class="audit-manual"><details><summary>Le test automatique ne fonctionne pas ? Saisir un score PageSpeed manuellement</summary><p>Fais un test sur <a class="audit-link" href="https://pagespeed.web.dev/" target="_blank" rel="noopener noreferrer">PageSpeed Insights</a>, puis indique le score <strong>Performance mobile</strong> affiché. Les autres scores ne seront pas inventés.</p><div class="audit-controls"><div class="field"><label for="audit-manual-score">Score mobile (0–100)</label><input id="audit-manual-score" type="number" min="0" max="100" placeholder="Ex. 73"></div><button class="btn outline" type="button" id="audit-use-manual">Utiliser ce score</button></div></details></div>
   </div>
@@ -114,7 +114,7 @@ document.getElementById('brief-form').addEventListener('submit',e=>{e.preventDef
 document.getElementById('copy').addEventListener('click',async()=>{const message=document.getElementById('message');try{await navigator.clipboard.writeText(message.value);document.getElementById('status').textContent='Message copié ! Ouvre Instagram ou Snapchat ci-dessous, puis colle-le dans la conversation privée.';}catch{message.focus();message.select();document.getElementById('status').textContent='Sélectionne « Copier » ou utilise Ctrl+C, puis colle le message dans ta conversation.';}});
 
 // Modifier seulement l'URL publique de votre Worker Cloudflare après son déploiement.
-// Ne JAMAIS placer de clé Google privée ou clé Stripe secrète dans ce fichier HTML.
+// Ne JAMAIS placer de clé Google privée ou secret PayPal dans ce fichier HTML.
 const LUNEO_API_URL = 'https://luneo-api.xevo1890.workers.dev';
 const apiReady = !LUNEO_API_URL.includes('REMPLACER-');
 let secureAuditToken = null;
@@ -203,17 +203,21 @@ payButton.addEventListener('click',async()=>{
  try{
    const response=await fetch(LUNEO_API_URL+'/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:secureAuditToken,services:auditChecked()})});
    const data=await response.json();if(!response.ok||!data.checkoutUrl)throw Error(data.error||'Paiement indisponible');
-   const checkout=new URL(data.checkoutUrl);if(checkout.protocol!=='https:'||!checkout.hostname.endsWith('.stripe.com'))throw Error('URL de paiement invalide');
+   const checkout=new URL(data.checkoutUrl);if(checkout.protocol!=='https:'||!(checkout.hostname==='paypal.com'||checkout.hostname.endsWith('.paypal.com'))||checkout.username||checkout.password)throw Error('URL de paiement invalide');
    window.location.assign(checkout.href);
  }catch(e){payStatus.textContent=e.message||'Paiement indisponible';updatePaidOffer();}
 });
-if(new URLSearchParams(location.search).get('audit_payment')==='success'){
- const sessionId=new URLSearchParams(location.search).get('session_id');
- if(apiReady&&sessionId&&/^cs_(test|live)_[A-Za-z0-9]+$/.test(sessionId)){
- fetch(LUNEO_API_URL+'/api/payment-status?session_id='+encodeURIComponent(sessionId)).then(r=>r.json()).then(d=>{
- payStatus.textContent=d.paid?'Paiement confirmé. Conserve ton reçu Stripe et contacte Lunéo sur Instagram ou Snapchat avec ta référence de paiement.':'Paiement en cours de vérification.';
- }).catch(()=>{payStatus.textContent='Vérifie ton reçu Stripe puis contacte Lunéo.';});
- }
+const paymentParams=new URLSearchParams(location.search);
+if(paymentParams.get('audit_payment')==='cancel')payStatus.textContent='Paiement PayPal annulé. Aucun audit payant n’a été confirmé.';
+if(paymentParams.get('audit_payment')==='return'){
+ const orderId=paymentParams.get('token');
+ if(apiReady&&orderId&&/^[A-Z0-9]{10,32}$/.test(orderId)){
+  payStatus.textContent='Confirmation du paiement auprès de PayPal…';
+  fetch(LUNEO_API_URL+'/api/paypal-capture',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({orderId})})
+   .then(async r=>{const d=await r.json();if(!r.ok||!d.paid)throw Error(d.error||'Paiement non confirmé');return d;})
+   .then(d=>{payStatus.textContent='Paiement confirmé ! Référence PayPal : '+d.reference+'. Contacte Lunéo sur Instagram ou Snapchat avec cette référence pour recevoir ton audit.';})
+   .catch(e=>{payStatus.textContent=(e.message||'Vérification impossible')+'. Si tu as été débité, conserve ton reçu PayPal et contacte Lunéo.';});
+ }else payStatus.textContent='Retour PayPal reçu, mais vérification indisponible. Garde ton reçu et contacte Lunéo.';
 }
 document.getElementById('audit-copy').addEventListener('click',async()=>{
   try{await navigator.clipboard.writeText(auditText());auditStatus.textContent='Bilan copié. Tu peux l’envoyer sur Instagram ou Snapchat.';}
