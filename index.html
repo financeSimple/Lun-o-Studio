@@ -207,22 +207,44 @@ payButton.addEventListener('click',async()=>{
    window.location.assign(checkout.href);
  }catch(e){payStatus.textContent=e.message||'Paiement indisponible';updatePaidOffer();}
 });
-const paymentParams=new URLSearchParams(location.search);
-  
-if (paymentParams.has('audit_payment')) {
+// Retour PayPal : afficher le résultat même sans réexécuter un audit.
+const paymentParams = new URLSearchParams(window.location.search);
+const paymentReturn = paymentParams.get('audit_payment');
+if (paymentReturn === 'return' || paymentReturn === 'cancel') {
+  // Le message était jusque-là caché dans #audit-results après une redirection.
   document.getElementById('audit-results').before(payStatus);
-}
-
-if(paymentParams.get('audit_payment')==='cancel')payStatus.textContent='Paiement PayPal annulé. Aucun audit payant n’a été confirmé.';
-if(paymentParams.get('audit_payment')==='return'){
- const orderId=paymentParams.get('token');
- if(apiReady&&orderId&&/^[A-Z0-9]{10,32}$/.test(orderId)){
-  payStatus.textContent='Confirmation du paiement auprès de PayPal…';
-  fetch(LUNEO_API_URL+'/api/paypal-capture',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({orderId})})
-   .then(async r=>{const d=await r.json();if(!r.ok||!d.paid)throw Error(d.error||'Paiement non confirmé');return d;})
-   .then(d=>{payStatus.textContent='Paiement confirmé ! Référence PayPal : '+d.reference+'. Contacte Lunéo sur Instagram ou Snapchat avec cette référence pour recevoir ton audit.';})
-   .catch(e=>{payStatus.textContent=(e.message||'Vérification impossible')+'. Si tu as été débité, conserve ton reçu PayPal et contacte Lunéo.';});
- }else payStatus.textContent='Retour PayPal reçu, mais vérification indisponible. Garde ton reçu et contacte Lunéo.';
+  payStatus.hidden = false;
+  payStatus.style.cssText = 'display:block;margin:18px 0;padding:16px;border:1px solid #6d8aad;border-radius:12px;background:#203751;color:#f3f7ff;line-height:1.6;';
+  document.getElementById('audit').scrollIntoView({block:'start'});
+  if (paymentReturn === 'cancel') {
+    payStatus.textContent = 'Paiement annulé : aucune confirmation PayPal reçue.';
+  } else {
+    const orderId = paymentParams.get('token');
+    if (!apiReady || !orderId || !/^[A-Z0-9]{10,32}$/.test(orderId)) {
+      payStatus.textContent = 'Retour PayPal reçu, mais identifiant de commande absent ou invalide. Conserve ton reçu et contacte Lunéo.';
+      console.warn('Luneo PayPal : identifiant de retour manquant ou invalide (valeur non affichée).');
+    } else {
+      payStatus.textContent = 'Paiement PayPal reçu. Vérification sécurisée en cours…';
+      fetch(LUNEO_API_URL + '/api/paypal-capture', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({orderId})
+      })
+      .then(async response => {
+        const data = await response.json();
+        if (!response.ok || data.paid !== true) throw new Error(data.error || 'Paiement non confirmé par le serveur');
+        return data;
+      })
+      .then(data => {
+        payStatus.textContent = 'Paiement confirmé ! Référence : ' + (data.reference || 'enregistrée') + '. Contacte Lunéo sur Instagram ou Snapchat avec ta référence pour recevoir ton audit.';
+        history.replaceState(null, '', location.pathname + location.hash);
+      })
+      .catch(error => {
+        payStatus.textContent = 'Vérification du paiement impossible : ' + (error.message || 'Erreur inconnue') + '. Ne repaie pas. Conserve ton reçu PayPal et contacte Lunéo.';
+        console.error('Luneo PayPal : échec de confirmation', error.message);
+      });
+    }
+  }
 }
 document.getElementById('audit-copy').addEventListener('click',async()=>{
   try{await navigator.clipboard.writeText(auditText());auditStatus.textContent='Bilan copié. Tu peux l’envoyer sur Instagram ou Snapchat.';}
