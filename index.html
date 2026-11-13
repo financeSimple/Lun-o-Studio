@@ -208,6 +208,11 @@ payButton.addEventListener('click',async()=>{
  }catch(e){payStatus.textContent=e.message||'Paiement indisponible';updatePaidOffer();}
 });
 const paymentParams=new URLSearchParams(location.search);
+  
+if (paymentParams.has('audit_payment')) {
+  document.getElementById('audit-results').before(payStatus);
+}
+
 if(paymentParams.get('audit_payment')==='cancel')payStatus.textContent='Paiement PayPal annulé. Aucun audit payant n’a été confirmé.';
 if(paymentParams.get('audit_payment')==='return'){
  const orderId=paymentParams.get('token');
