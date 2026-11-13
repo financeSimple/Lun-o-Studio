@@ -44,6 +44,14 @@
 .audit-selectors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.audit-choice{display:flex;align-items:flex-start;gap:11px;background:#132034;border:1px solid #3b506b;padding:15px;border-radius:13px;cursor:pointer}.audit-choice input{width:18px;height:18px;margin:2px 0 0;accent-color:#93b4e4;flex-shrink:0}.audit-choice strong{display:block;font-size:13px}.audit-choice small{display:block;color:var(--muted);margin-top:5px;font-size:11px;line-height:1.4}
 .audit-quote{padding:22px;border:1px solid #52739b;border-radius:17px;background:#1d3048}.audit-total{display:flex;justify-content:space-between;gap:16px;align-items:center}.audit-total strong{font-size:32px;color:#b2d1ff}.audit-price-detail{color:var(--muted);font-size:12px;line-height:1.6;margin:10px 0 16px}.audit-buttons{display:flex;gap:10px;flex-wrap:wrap}.audit-manual{margin-top:12px;padding:16px;border:1px dashed #4f6580;border-radius:13px}.audit-manual summary{font-size:13px}.audit-manual details{padding:0;border:0}.audit-manual p{margin:12px 0}.audit-manual input{max-width:160px}.audit-link{color:#bbd3f6;text-decoration:underline;text-underline-offset:3px}.audit-small-heading{font-size:16px;margin:5px 0 12px;font-weight:600}
 @media(max-width:700px){.audit-shell{padding:20px 16px}.audit-heading{display:block}.audit-chip{display:inline-block;margin-top:12px}.audit-controls{grid-template-columns:1fr}.audit-scores{grid-template-columns:repeat(2,1fr)}.audit-selectors{grid-template-columns:1fr}.audit-total strong{font-size:27px}}
+
+.luneo-report{margin-top:20px;padding:22px;background:#142338;border:1px solid #6b88a9;border-radius:16px}
+.luneo-report h3{font-size:21px;margin:0 0 10px}.luneo-report-scores{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:15px 0}
+.luneo-report-scores div{border:1px solid #3c5574;border-radius:10px;padding:12px;text-align:center}
+.luneo-report-scores strong{display:block;font-size:24px;color:#9cbee9}
+.luneo-report-scores span{font-size:11px;color:#c8d5e6}
+.luneo-report ol{padding-left:22px}.luneo-report li{margin:13px 0;line-height:1.5}.luneo-report li p{color:#bdcadc;margin:4px 0;font-size:13px}
+@media(max-width:700px){.luneo-report-scores{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -74,6 +82,14 @@ Les concepts présentés sont fictifs. Ajoute tes informations professionnelles 
       <div><h3 class="audit-small-heading">Que veux-tu améliorer ?</h3><div class="audit-selectors"><label class="audit-choice"><input type="checkbox" class="audit-option" value="speed" checked><span><strong>⚡ Vitesse mobile</strong><small>Analyse et optimisation des ressources — à partir de 39 €</small></span></label><label class="audit-choice"><input type="checkbox" class="audit-option" value="access"><span><strong>♿ Accessibilité</strong><small>Images, liens et titres — à partir de 25 €</small></span></label><label class="audit-choice"><input type="checkbox" class="audit-option" value="seo"><span><strong>🔎 Référencement SEO</strong><small>Balises et structure du site — à partir de 29 €</small></span></label><label class="audit-choice"><input type="checkbox" class="audit-option" value="bugs"><span><strong>🛠️ Correction de bugs</strong><small>Vérification et diagnostic — à partir de 39 €</small></span></label></div></div>
       <div class="audit-quote"><div class="audit-total"><span>Estimation indicative</span><strong id="audit-price">—</strong></div><p class="audit-price-detail" id="audit-price-detail"></p><div class="audit-buttons"><button class="btn lime" type="button" id="audit-request">Préparer ma demande →</button><button class="btn outline" type="button" id="audit-copy">Copier le bilan</button></div><p class="audit-note">Estimation pour les corrections éventuelles : cette prestation reste sur devis séparé.</p><div class="audit-pay" style="margin-top:20px;padding-top:18px;border-top:1px solid #52739b"><h3 class="audit-small-heading">Audit approfondi payant</h3><p class="audit-note">Un diagnostic avec recommandations, sans correction automatique. Le tarif est recalculé par le serveur après le test mobile.</p><p id="audit-paid-price" style="font-size:24px;font-weight:700;margin:12px 0">—</p><button class="btn lime" type="button" id="audit-pay" disabled>Payer mon audit avec PayPal</button><p class="audit-note" id="audit-payment-status" role="status" aria-live="polite">Paiement PayPal disponible après configuration du serveur.</p></div></div>
     </div>
+    <section id="luneo-report" class="luneo-report" hidden aria-labelledby="luneo-report-heading">
+      <h3 id="luneo-report-heading">Ton diagnostic est disponible</h3>
+      <p id="luneo-report-summary" class="small">Le paiement est confirmé. Ton rapport a été préparé à partir du test mobile.</p>
+      <div id="luneo-report-scores" class="luneo-report-scores"></div>
+      <div id="luneo-report-recommendations"></div>
+      <div class="actions"><button type="button" class="btn lime" id="luneo-report-download">Télécharger le rapport HTML</button><button type="button" class="btn outline" id="luneo-report-print">Imprimer / enregistrer en PDF</button></div>
+      <p class="small">Le rapport décrit uniquement la page testée, sans correction automatique. Conserve ton fichier et ta référence de paiement.</p>
+    </section>
     <div class="audit-manual"><details><summary>Le test automatique ne fonctionne pas ? Saisir un score PageSpeed manuellement</summary><p>Fais un test sur <a class="audit-link" href="https://pagespeed.web.dev/" target="_blank" rel="noopener noreferrer">PageSpeed Insights</a>, puis indique le score <strong>Performance mobile</strong> affiché. Les autres scores ne seront pas inventés.</p><div class="audit-controls"><div class="field"><label for="audit-manual-score">Score mobile (0–100)</label><input id="audit-manual-score" type="number" min="0" max="100" placeholder="Ex. 73"></div><button class="btn outline" type="button" id="audit-use-manual">Utiliser ce score</button></div></details></div>
   </div>
 </div></section>
@@ -207,6 +223,53 @@ payButton.addEventListener('click',async()=>{
    window.location.assign(checkout.href);
  }catch(e){payStatus.textContent=e.message||'Paiement indisponible';updatePaidOffer();}
 });
+
+let luneoReportData = null;
+let luneoReportHtml = '';
+function luneoEscapeHtml(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function luneoScoreLabel(key){return ({performance:'Performance',accessibility:'Accessibilité',seo:'SEO','best-practices':'Bonnes pratiques'})[key]||key;}
+function luneoMakeReportHtml(d){
+  const scores=['performance','accessibility','seo','best-practices'].map(k=>'<tr><td>'+luneoEscapeHtml(luneoScoreLabel(k))+'</td><td>'+luneoEscapeHtml(Number.isFinite(d.scores?.[k])?d.scores[k]+'/100':'Non mesuré')+'</td></tr>').join('');
+  const rows=(d.recommendations||[]).map((r,i)=>'<section><h3>'+(i+1)+'. '+luneoEscapeHtml(r.title)+' — '+luneoEscapeHtml(r.priority)+'</h3><p>'+luneoEscapeHtml(r.action)+'</p></section>').join('');
+  const measured=d.measuredAt?new Date(d.measuredAt).toLocaleString('fr-FR'):'Date inconnue';
+  const services=(d.services||[]).map(luneoEscapeHtml).join(', ')||'Diagnostic général';
+  const lcp=Number.isFinite(d.metrics?.lcp)?(d.metrics.lcp/1000).toFixed(2)+' s':'Non mesuré';
+  return '<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Rapport Lunéo — '+luneoEscapeHtml(d.reference)+'</title><style>body{font:16px/1.55 Arial,sans-serif;color:#152235;max-width:820px;margin:35px auto;padding:0 26px}h1{font-size:34px}h2{margin-top:32px;color:#173e70}h3{font-size:17px;margin-bottom:6px}section{border-bottom:1px solid #ddd;padding:8px 0}table{border-collapse:collapse;width:100%}td{padding:11px;border-bottom:1px solid #ddd}.muted{color:#60718a}.pill{background:#e8f1fc;padding:8px 12px;border-radius:8px;display:inline-block}.print{margin:15px 0;padding:10px 15px;border:0;border-radius:8px;background:#173e70;color:white;cursor:pointer}@media print{.print{display:none}body{margin:0}}</style></head><body><button class="print" onclick="window.print()">Imprimer / enregistrer en PDF</button><p class="muted">LUNÉO STUDIO • AUDIT AUTOMATIQUE</p><h1>Rapport de diagnostic web</h1><p><b>Site :</b> '+luneoEscapeHtml(d.website)+'</p><p><b>Référence :</b> '+luneoEscapeHtml(d.reference)+'</p><p><b>Date du test :</b> '+luneoEscapeHtml(measured)+'</p><p><b>Prestations choisies :</b> '+services+'</p><h2>Résultats mobile</h2><table>'+scores+'</table><p><b>Largest Contentful Paint (LCP) :</b> '+luneoEscapeHtml(lcp)+'</p><h2>Recommandations</h2>'+rows+'<h2>Périmètre et limites</h2><p>'+luneoEscapeHtml(d.methodology)+'</p><p class="pill">'+luneoEscapeHtml(d.scope)+'</p><p class="muted">Rapport généré automatiquement après confirmation du paiement PayPal Sandbox ou Live selon la configuration du marchand.</p></body></html>';
+}
+async function luneoGetReport(orderId){
+ const response=await fetch(LUNEO_API_URL+'/api/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({orderId})});
+ const data=await response.json();if(!response.ok||data.paid!==true)throw Error(data.error||'Rapport indisponible');
+ luneoReportData=data;luneoReportHtml=luneoMakeReportHtml(data);
+ const container=document.getElementById('luneo-report');container.hidden=false;
+ const summary=document.getElementById('luneo-report-summary');
+ summary.textContent='Site : '+data.website+' · Référence : '+data.reference+' · Test mobile, diagnostic sans modification du site.';
+ const scores=document.getElementById('luneo-report-scores');scores.replaceChildren();
+ for(const key of ['performance','accessibility','seo','best-practices']){
+  const cell=document.createElement('div'),number=document.createElement('strong'),title=document.createElement('span');
+  number.textContent=Number.isFinite(data.scores?.[key])?data.scores[key]+'/100':'—';title.textContent=luneoScoreLabel(key);cell.append(number,title);scores.append(cell);
+ }
+ const recommendations=document.getElementById('luneo-report-recommendations');recommendations.replaceChildren();
+ const heading=document.createElement('h4');heading.textContent='Priorités recommandées';const list=document.createElement('ol');
+ for(const item of (data.recommendations||[])){
+  const li=document.createElement('li'),name=document.createElement('strong'),p=document.createElement('p');
+  name.textContent=item.title+' ('+item.priority+')';p.textContent=item.action;li.append(name,p);list.append(li);
+ }recommendations.append(heading,list);
+ container.scrollIntoView({block:'nearest',behavior:'smooth'});
+ return data;
+}
+function luneoOpenReport(){
+ if(!luneoReportHtml)return;
+ const blob=new Blob([luneoReportHtml],{type:'text/html;charset=utf-8'}),url=URL.createObjectURL(blob);
+ const a=document.createElement('a');a.href=url;a.download='Luneo-rapport-'+(luneoReportData?.reference||'audit')+'.html';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),15000);
+}
+document.getElementById('luneo-report-download').addEventListener('click',luneoOpenReport);
+document.getElementById('luneo-report-print').addEventListener('click',()=>{
+ if(!luneoReportHtml)return;
+ const popup=window.open('','_blank');
+ if(!popup){luneoOpenReport();return;}
+ popup.document.open();popup.document.write(luneoReportHtml);popup.document.close();popup.focus();
+});
+
 // Retour PayPal : afficher le résultat même sans réexécuter un audit.
 const paymentParams = new URLSearchParams(window.location.search);
 const paymentReturn = paymentParams.get('audit_payment');
@@ -235,9 +298,16 @@ if (paymentReturn === 'return' || paymentReturn === 'cancel') {
         if (!response.ok || data.paid !== true) throw new Error(data.error || 'Paiement non confirmé par le serveur');
         return data;
       })
-      .then(data => {
-        payStatus.textContent = 'Paiement confirmé ! Référence : ' + (data.reference || 'enregistrée') + '. Contacte Lunéo sur Instagram ou Snapchat avec ta référence pour recevoir ton audit.';
-        history.replaceState(null, '', location.pathname + location.hash);
+      .then(async data => {
+        payStatus.textContent = 'Paiement confirmé ! Référence : ' + (data.reference || 'enregistrée') + '. Préparation de ton rapport…';
+        try {
+          await luneoGetReport(orderId);
+          payStatus.textContent = 'Paiement confirmé ! Ton rapport est prêt ci-dessous. Référence : ' + data.reference + '.';
+          history.replaceState(null, '', location.pathname + '#audit');
+        } catch (err) {
+          payStatus.textContent = 'Paiement confirmé, mais le rapport est temporairement indisponible : '+(err.message||'Erreur')+'. Ne repaie pas. Garde ta référence : '+data.reference+'.';
+          // Conserver les paramètres pour pouvoir récupérer le rapport plus tard.
+        }
       })
       .catch(error => {
         payStatus.textContent = 'Vérification du paiement impossible : ' + (error.message || 'Erreur inconnue') + '. Ne repaie pas. Conserve ton reçu PayPal et contacte Lunéo.';
