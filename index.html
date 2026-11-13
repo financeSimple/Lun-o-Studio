@@ -222,7 +222,9 @@ payButton.addEventListener('click',async()=>{
    const response=await fetch(LUNEO_API_URL+'/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:secureAuditToken,tier:tierInput.value,platform:platformInput.value,services:auditChecked()})});
    const data=await response.json();if(!response.ok||!data.checkoutUrl)throw Error(data.error||'Paiement indisponible');
     if(!/^[A-Z0-9]{10,32}$/.test(data.orderId||'')||!/^[a-f0-9]{64}$/.test(data.deliveryKey||''))throw Error('Clé de livraison sécurisée absente. Réessaie sans payer.');
-    try{sessionStorage.setItem('luneo-delivery:'+data.orderId,data.deliveryKey);}catch{throw Error('Le navigateur empêche de conserver la clé de livraison. Active le stockage de session avant de payer.');}
+    // V4.1 : enregistrer la clé de livraison pour le retour depuis PayPal,
+    // y compris lorsque PayPal rouvre le site dans un autre onglet du même navigateur.
+    luneoSaveDeliveryKey(data.orderId,data.deliveryKey);
    const checkout=new URL(data.checkoutUrl);if(checkout.protocol!=='https:'||!(checkout.hostname==='paypal.com'||checkout.hostname.endsWith('.paypal.com'))||checkout.username||checkout.password)throw Error('URL de paiement invalide');
    window.location.assign(checkout.href);
  }catch(e){payStatus.textContent=e.message||'Paiement indisponible';updatePaidOffer();}
@@ -279,8 +281,31 @@ function luneoMakeReportHtml(d){
   const lcp=Number.isFinite(d.metrics?.lcp)?(d.metrics.lcp/1000).toFixed(2)+' s':'Non mesuré';
   return '<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Rapport Lunéo — '+luneoEscapeHtml(d.reference)+'</title><style>body{font:16px/1.55 Arial,sans-serif;color:#152235;max-width:820px;margin:35px auto;padding:0 26px}h1{font-size:34px}h2{margin-top:32px;color:#173e70}h3{font-size:17px;margin-bottom:6px}section{border-bottom:1px solid #ddd;padding:8px 0}table{border-collapse:collapse;width:100%}td{padding:11px;border-bottom:1px solid #ddd}.muted{color:#60718a}.pill{background:#e8f1fc;padding:8px 12px;border-radius:8px;display:inline-block}.print{margin:15px 0;padding:10px 15px;border:0;border-radius:8px;background:#173e70;color:white;cursor:pointer}@media print{.print{display:none}body{margin:0}}</style></head><body><button class="print" onclick="window.print()">Imprimer / enregistrer en PDF</button><p class="muted">LUNÉO STUDIO • AUDIT AUTOMATIQUE</p><h1>Rapport de diagnostic web</h1><p><b>Site :</b> '+luneoEscapeHtml(d.website)+'</p><p><b>Référence :</b> '+luneoEscapeHtml(d.reference)+'</p><p><b>Date du test :</b> '+luneoEscapeHtml(measured)+'</p><p><b>Prestations choisies :</b> '+services+'</p><h2>Résultats mobile</h2><table>'+scores+'</table><p><b>Largest Contentful Paint (LCP) :</b> '+luneoEscapeHtml(lcp)+'</p><h2>'+(d.tier==='kit'?'Plan de corrections guidées':'Recommandations')+'</h2>'+(d.tier==='kit'?plan:rows)+'<h2>Périmètre et limites</h2><p>'+luneoEscapeHtml(d.methodology)+'</p><p class="pill">'+luneoEscapeHtml(d.scope)+'</p><p class="muted">Rapport généré automatiquement après confirmation du paiement PayPal Sandbox ou Live selon la configuration du marchand.</p></body></html>';
 }
+// V4.1 : la clé reste côté navigateur, jamais dans l'URL ou une requête GET.
+// Une durée courte (7 jours) limite le stockage persistant. Le navigateur peut
+// toujours effacer ses données et empêcher la récupération automatique.
+const LUNEO_DELIVERY_TTL_MS=7*24*60*60*1000;
+function luneoSaveDeliveryKey(orderId,deliveryKey){
+ const k='luneo-delivery:'+orderId;
+ const record=JSON.stringify({key:deliveryKey,expiresAt:Date.now()+LUNEO_DELIVERY_TTL_MS});
+ let success=false;
+ try{sessionStorage.setItem(k,record);success=sessionStorage.getItem(k)===record;}catch{}
+ try{localStorage.setItem(k,record);success=localStorage.getItem(k)===record||success;}catch{}
+ if(!success)throw Error('Ton navigateur bloque le stockage local nécessaire au retour PayPal. Autorise le stockage avant de payer.');
+}
 function luneoDeliveryKey(orderId){
- try{return sessionStorage.getItem('luneo-delivery:'+orderId)||'';}catch{return '';}
+ const k='luneo-delivery:'+orderId;
+ for(const storage of [sessionStorage,localStorage]){
+  try{
+   const raw=storage.getItem(k);if(!raw)continue;
+   // Compatibilité avec une commande initiée avant V4.1 (clé brute en session).
+   if(/^[a-f0-9]{64}$/.test(raw))return raw;
+   const obj=JSON.parse(raw);
+   if(!obj||!Number.isFinite(obj.expiresAt)||Date.now()>obj.expiresAt){storage.removeItem(k);continue;}
+   if(typeof obj.key==='string'&&/^[a-f0-9]{64}$/.test(obj.key))return obj.key;
+  }catch{}
+ }
+ return '';
 }
 async function luneoGetReport(orderId){
  const response=await fetch(LUNEO_API_URL+'/api/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({orderId,deliveryKey:luneoDeliveryKey(orderId)})});
@@ -454,7 +479,7 @@ if (paymentReturn === 'return' || paymentReturn === 'cancel') {
       payStatus.textContent = 'Retour PayPal reçu, mais identifiant de commande absent ou invalide. Conserve ton reçu et contacte Lunéo.';
       console.warn('Luneo PayPal : identifiant de retour manquant ou invalide (valeur non affichée).');
     } else if (!luneoDeliveryKey(orderId)) {
-      payStatus.textContent = 'Retour PayPal détecté, mais la clé privée de livraison de cette session est absente. Ne repaie pas : conserve ton reçu et contacte Lunéo pour récupération.';
+      payStatus.textContent = 'Retour PayPal détecté, mais la clé de livraison est introuvable dans ce navigateur. Ne repaie pas : conserve ton reçu et contacte Lunéo. Vérifie aussi que tu es revenu dans le même profil de navigateur.';
     } else {
       payStatus.textContent = 'Paiement PayPal reçu. Vérification sécurisée en cours…';
       fetch(LUNEO_API_URL + '/api/paypal-capture', {
